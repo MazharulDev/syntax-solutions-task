@@ -1,10 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './login.css'
+import React, { useState } from 'react';
+import auth from '../../firebase.init';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate()
+    const [
+        signInWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useSignInWithEmailAndPassword(auth);
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('');
+    const handleSubmit = async e => {
+        e.preventDefault();
+        await signInWithEmailAndPassword(email, password)
+
+    }
+    if (user) {
+        navigate('/')
+    }
     return (
-        <div className='login-page'>
+        <div className='margin-top'>
             <div>
                 <section id="breadcrumbs" class="breadcrumbs">
                     <div class="container">
@@ -21,15 +39,15 @@ const Login = () => {
                 </section>
                 <div class="col-lg-8 pt-5 mt-lg-0 d-flex justify-content-center w-100">
 
-                    <form class="php-email-form">
+                    <form onSubmit={handleSubmit} class="php-email-form">
                         <div class="row">
                             <div>
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required />
+                                <input onChange={(e) => setEmail(e.target.value)} type="email" class="form-control" name="email" id="email" placeholder="Your Email" required />
                             </div>
                         </div>
                         <div class="row">
                             <div class="mt-3">
-                                <input type="password" class="form-control" name="password" id="password" placeholder="Your Password" required />
+                                <input onChange={(e) => setPassword(e.target.value)} type="password" class="form-control" name="password" id="password" placeholder="Your Password" required />
                             </div>
                         </div>
 

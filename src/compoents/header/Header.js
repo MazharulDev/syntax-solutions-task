@@ -1,7 +1,22 @@
+import { signOut } from 'firebase/auth';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import auth from '../../firebase.init';
+import useAdmin from '../../hooks/useAdmin';
 
 const Header = () => {
+    const navigate = useNavigate()
+    const [user, loading] = useAuthState(auth);
+    const handleSignOut = () => {
+        signOut(auth)
+        navigate('/login')
+    }
+
+    const [admin] = useAdmin(user);
+    if (loading) {
+        return <p>Loading...</p>
+    }
     return (
         <div>
             {/* ======= Header ======= */}
@@ -31,10 +46,13 @@ const Header = () => {
                             </li>
                             <li><a href="#">Services</a></li>
                             <li><a href="#">Portfolio</a></li>
-                            <li><a href="#">Pricing</a></li>
+                            {admin && <li><NavLink to="/addcontent">Add Content</NavLink></li>}
+                            {!admin && <li><NavLink to="/viewcontent">View Content</NavLink></li>}
                             <li><a href="#">Blog</a></li>
                             <li><a href="#">Contact</a></li>
-                            <li><Link to="/login" className="getstarted">Login</Link></li>
+                            {
+                                user ? <li onClick={handleSignOut} className='getstarted pointer'>Signout</li> : <li><Link to="/login" className="getstarted">Login</Link></li>
+                            }
                         </ul>
                         <i className="bi bi-list mobile-nav-toggle" />
                     </nav>{/* .navbar */}
