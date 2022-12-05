@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 const AddContent = () => {
+    const [loading, setLoading] = useState(false)
     const { register, handleSubmit, reset } = useForm();
     const onSubmit = data => {
         const img = data.img[0];
@@ -23,7 +24,8 @@ const AddContent = () => {
                     img: img
                 }
                 //send database
-                fetch('http://localhost:5000/content', {
+                setLoading(true)
+                fetch('https://syntax-solutions.onrender.com/content', {
                     method: 'POST',
                     headers: {
                         'content-type': 'application/json'
@@ -33,6 +35,7 @@ const AddContent = () => {
                     .then(res => res.json())
                     .then(output => {
                         if (output.insertedId) {
+                            setLoading(false)
                             toast.success('Content added successfully')
                             reset();
                         } else {
@@ -77,7 +80,7 @@ const AddContent = () => {
                         </div>
                     </div>
 
-                    <div class="text-center my-3"><button className='btn btn-danger' type="submit">Add Content</button></div>
+                    {loading ? <p className='text-center'>Adding Content</p> : <div class="text-center my-3"><button className='btn btn-danger' type="submit">Add Content</button></div>}
                 </form>
 
             </div>
